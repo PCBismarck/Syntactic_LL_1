@@ -4,5 +4,15 @@
 #pragma once
 
 #include <iostream>
+#include <set>
+#include <string>
+
+#define _TEST_
+
+using namespace std;
+
+bool First(char nonTerminator, set<char> &result);
+
+bool Follow(char nonTerminator, set<char> &result);
 
 // TODO: 在此处引用程序需要的其他标头。
