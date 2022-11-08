@@ -9,7 +9,7 @@ add_executable (Syntactic_LL_1
 	"Syntactic_LL_1.h" 
 	"Generator.cpp"
 	"Generator.h"
-)
+ "main.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Syntactic_LL_1 PROPERTY CXX_STANDARD 20)

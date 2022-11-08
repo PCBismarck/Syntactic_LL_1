@@ -1,5 +1,4 @@
-﻿// Syntactic_LL_1.cpp: 定义应用程序的入口点。
-//
+﻿//
 
 #include "Syntactic_LL_1.h"
 
@@ -29,7 +28,6 @@ int main()
 	vector<char> sentence = { 'd', '+', '(', 'd', '*', 'd', ')', '$'};
 	cout << "Test sentence: d+(d*d)" << endl;
 	table.analysis(sentence);
-
 	return 0;
 }
 
@@ -99,35 +97,6 @@ predictAnalysisTable::predictAnalysisTable()
 	for (auto it = get_non_terminator().begin(); it != get_non_terminator().end(); ++it)
 		g.push_back(*it);
 	
-
-	//char g[5] = { 'E', 'e', 'T', 't', 'F' };
-
-	//set<char> E_first, A_first, T_first, B_first, F_first;
-
-	//set<char> E_follow, A_follow, T_follow, B_follow, F_follow;
-
-	//unordered_map<char, set<char>> first_set = {
-	//	{'E', E_first},
-	//	{'e', A_first},
-	//	{'T', T_first},
-	//	{'t', B_first},
-	//	{'F', F_first}
-	//};
-
-	//unordered_map<char, set<char>> follow_set = {
-	//	{'E', E_follow},
-	//	{'e', A_follow},
-	//	{'T', T_follow},
-	//	{'t', B_follow},
-	//	{'F', F_follow}
-	//};
-
-	//for (int i = 0 ; i < 5; ++i)
-	//{
-	//	First(g[i], first_set[g[i]]);
-	//	Follow(g[i], follow_set[g[i]]);
-	//}
-
 	unordered_map<char, set<char>> first_set, follow_set;
 	for (int i = 0; i < g.size(); ++i)
 	{

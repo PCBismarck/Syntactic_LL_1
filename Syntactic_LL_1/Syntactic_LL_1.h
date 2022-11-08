@@ -14,7 +14,7 @@
 #include "Generator.h"
 #include <iterator>
 
-#define _TEST_
+//#define _TEST_
 
 using namespace std;
 
