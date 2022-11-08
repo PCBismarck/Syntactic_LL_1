@@ -7,56 +7,26 @@
 
 int main()
 {
-	//set<string> E_temp = Generator()['A'];
-	//for (set<string>::iterator it = E_temp.begin(); it != E_temp.end(); ++it)
-	//	cout << "E" << cnt++ << ":" << *(it) << endl;
-	char g[5] = { 'E', 'A', 'T', 'B', 'F' };
+	unordered_map<char, set<string>> test = Generator();
+	cout << "New Grammar:" << endl;
+	for (auto it = test.begin(); it != test.end(); ++it)
+	{
+		cout << it->first << "->";
+		int flag = 0;
+		for (auto it_g = it->second.begin(); it_g != it->second.end(); ++it_g)
+		{
+			if (flag)
+				cout << "|";
+			else
+				flag = 1;
+			cout << *it_g;
+		}
+		cout << endl;
+	}
 
 	predictAnalysisTable table;
-	cout << table.get_generation('B', '$') << endl;
 
-
-	set<char> E_first, A_first, T_first, B_first, F_first;
-
-	set<char> E_follow, A_follow, T_follow, B_follow, F_follow;
-
-	unordered_map<char, set<char>> first_set = {
-	{'E', E_first},
-	{'A', A_first},
-	{'T', T_first},
-	{'B', B_first},
-	{'F', F_first}
-	};
-
-	unordered_map<char, set<char>> follow_set = {
-		{'E', E_follow},
-		{'A', A_follow},
-		{'T', T_follow},
-		{'B', B_follow},
-		{'F', F_follow}
-	};
-
-	for (int i = 0; i < 5; ++i)
-	{
-		int cnt = 0;
-		if (table.First(g[i], first_set[g[i]]))
-			for (set<char>::iterator it = first_set[g[i]].begin(); it != first_set[g[i]].end(); ++it)
-				cout << g[i] << cnt++ << ":" << (*it) << '\t';
-		cout << endl;
-	}
-
-	cout << endl;
-
-	for (int i = 0; i < 5; ++i)
-	{
-		int cnt = 0;
-		if (table.Follow(g[i], follow_set[g[i]]))
-			for (set<char>::iterator it = follow_set[g[i]].begin(); it != follow_set[g[i]].end(); ++it)
-				cout << g[i] << cnt++ << ":" << (*it) << '\t';
-		cout << endl;
-	}
-
-	vector<char> sentence = { 'd', '+', 'd', '*', 'd', '$'};
+	vector<char> sentence = { 'd', '+', '(', 'd', '*', 'd', ')', '$'};
 	cout << "Test sentence: d+(d*d)" << endl;
 	table.analysis(sentence);
 
@@ -65,15 +35,6 @@ int main()
 
 #endif
 
-#ifndef _TEST_
-
-int main(void)
-{
-	cout << "No test!" << endl;
-	return 0;
-}
-
-#endif
 
 
 void predictAnalysisTable::analysis(vector<char> input)
@@ -81,18 +42,26 @@ void predictAnalysisTable::analysis(vector<char> input)
 	stk.push_back('$');
 	stk.push_back('E');
 	int cnt = 0;
-	int process = 0;
+	int process = 1;
 	while (!stk.empty())
 	{
-		cout << "Current Stack: ";
+
+		cout << process++ << ".\t";
+		for (int i = 0; i < input.size(); ++i)
+		{
+			if (i == cnt)
+				cout << " ->";
+			cout << input[i];
+		}
+		cout   << "\tStack:\t";
 		for (int i = 0; i < stk.size(); ++i)
 		{
-			cout << stk[i] << ' ';
+			cout << stk[i] /*<< ' '*/;
 		}
-		cout << endl;
 
 		if (stk.back() == input[cnt])
 		{
+			cout << "\t\tpop " << input[cnt] << endl;
 			++cnt;
 			stk.pop_back();
 		}
@@ -100,17 +69,25 @@ void predictAnalysisTable::analysis(vector<char> input)
 		{
 			string generation = get_generation(stk.back(), input[cnt]);
 			if (generation.length() == 0)
+			{
 				cout << "Error Input" << endl;
-			else if(generation == "#")
+				break;
+			}
+			else if (generation == "#")
+			{
+				cout << "\t\tpop " << stk.back() << endl;
 				stk.pop_back();
+			}
 			else
 			{
+				cout << "\t\t" << stk.back() << "->" << generation << endl;
 				stk.pop_back();
 				for (string::reverse_iterator it = generation.rbegin(); it != generation.rend(); ++it)
 					stk.push_back(*it);
 			}
 		}
 	}
+
 	if (stk.empty())
 		cout << "Accept!" << endl;
 }
@@ -118,35 +95,52 @@ void predictAnalysisTable::analysis(vector<char> input)
 
 predictAnalysisTable::predictAnalysisTable()
 {
-	char g[5] = { 'E', 'A', 'T', 'B', 'F' };
+	vector<char> g;
+	for (auto it = get_non_terminator().begin(); it != get_non_terminator().end(); ++it)
+		g.push_back(*it);
+	
 
-	set<char> E_first, A_first, T_first, B_first, F_first;
+	//char g[5] = { 'E', 'e', 'T', 't', 'F' };
 
-	set<char> E_follow, A_follow, T_follow, B_follow, F_follow;
+	//set<char> E_first, A_first, T_first, B_first, F_first;
 
-	unordered_map<char, set<char>> first_set = {
-		{'E', E_first},
-		{'A', A_first},
-		{'T', T_first},
-		{'B', B_first},
-		{'F', F_first}
-	};
+	//set<char> E_follow, A_follow, T_follow, B_follow, F_follow;
 
-	unordered_map<char, set<char>> follow_set = {
-		{'E', E_follow},
-		{'A', A_follow},
-		{'T', T_follow},
-		{'B', B_follow},
-		{'F', F_follow}
-	};
+	//unordered_map<char, set<char>> first_set = {
+	//	{'E', E_first},
+	//	{'e', A_first},
+	//	{'T', T_first},
+	//	{'t', B_first},
+	//	{'F', F_first}
+	//};
 
-	for (int i = 0 ; i < 5; ++i)
+	//unordered_map<char, set<char>> follow_set = {
+	//	{'E', E_follow},
+	//	{'e', A_follow},
+	//	{'T', T_follow},
+	//	{'t', B_follow},
+	//	{'F', F_follow}
+	//};
+
+	//for (int i = 0 ; i < 5; ++i)
+	//{
+	//	First(g[i], first_set[g[i]]);
+	//	Follow(g[i], follow_set[g[i]]);
+	//}
+
+	unordered_map<char, set<char>> first_set, follow_set;
+	for (int i = 0; i < g.size(); ++i)
 	{
-		First(g[i], first_set[g[i]]);
-		Follow(g[i], follow_set[g[i]]);
+		set<char> temp_set;
+		First(g[i], temp_set);
+		first_set[g[i]] = temp_set;
+		temp_set.clear();
+		Follow(g[i], temp_set);
+		follow_set[g[i]] = temp_set;
 	}
 
-	for (int i =0; i < 5; ++i)
+
+	for (int i =0; i < g.size(); ++i)
 	{
 		for (set<char>::iterator it = first_set[g[i]].begin(); it != first_set[g[i]].end(); ++it)
 		{
@@ -234,7 +228,9 @@ bool predictAnalysisTable::Follow(char nonTerminator, set<char>& result)
 	if (!is_non_terminator(nonTerminator))
 		return NULL;
 
-	char g[5] = { 'E', 'A', 'T', 'B', 'F' };
+	vector<char> g;
+	for (auto it = get_non_terminator().begin(); it != get_non_terminator().end(); ++it)
+		g.push_back(*it);
 	if (nonTerminator == 'E')
 		result.insert('$');
 	for (int i = 0; i < 5; ++i)
